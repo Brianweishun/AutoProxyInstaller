@@ -1,0 +1,7 @@
+{
+	"BorgenServer":"api2tokyo.keypascoid.com",
+	"P12Path":"C:\\Keypasco\\KeypascoProxyInstaller\\files\\test3_icpadmin.p12",
+	"P12Password":"!Keypasco168",
+	"ICP":"test3",
+	"ClientApi":"api2.keypascoid.com"
+}

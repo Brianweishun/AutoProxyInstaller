@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ICP API Test</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<h1>Borgen API Testing Tool</h1>
+
+<label>API Server:</label>
+<input type="text" id="apiServer" value="https://ftborgen.keypasco.com">
+<label>System Admin Username:</label>
+<input type="text" id="saUsername" value="sysadmins|admin">
+<label>System Admin Password:</label>
+<input type="text" id="saPassword" value="admin">
+
+<h2>==Create ICP==</h2>
+<label>ID(ICP):</label>
+<input type="text" id="icp" value="test3">
+<label>Full Name:</label>
+<input type="text" id="fullname" value="Full name">
+
+<h2>==Create new Borgen User==</h2>
+<label>Borgen Username:</label>
+<input type="text" id="brogenUser" value="icpadmin">
+<label>Borgen User Password:</label>
+<input type="text" id="borgenPassword" value="!Keypasco168">
+
+<h2>==Download P12==</h2>
+<label>Certificate Name:</label>
+<input type="text" id="user" value="test3|icpadmin">
+<label>Borgen User Password:</label>
+<input type="text" id="password" value="!Keypasco168">
+<!-- <label>JSON Payload:</label>
+<textarea id="jsonInput">
+{
+  "id": "test3",
+  "fullname": "test3 name"
+}
+</textarea> -->
+
+<!-- <button onclick="createICP()">Create ICP</button>
+<button onclick="addBorgenUser()">Create Borgen User</button>
+<button onclick="downloadP12()">Generate P12</button>
+<button id="btnTest">Test</button> -->
+
+
+<button id="btnCreateICP">Create ICP</button>
+<button id="btnAddBorgenUser">Create Borgen User</button>
+<button id="btnDownloadP12">Generate P12</button>
+<button id="btnRunPS">Run Script</button>
+<button id="btnDownloadInstaller">Download</button>
+
+<h3>Response:</h3>
+<pre id="result"></pre>
+
+<h3>Log:</h3>
+<div id="log"></div>
+
+<script src="main.js"></script>
+
+</body>
+</html>
