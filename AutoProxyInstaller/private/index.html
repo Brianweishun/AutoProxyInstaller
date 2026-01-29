@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ICP API Test</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div style="text-align: right;">
+    <span>Current User: <span id="current-user">Loading...</span></span> | 
+    <a href="/logout" style="color: red; text-decoration: none; font-weight: bold;">Logout</a>
+</div>
+
+<h1>Borgen API Testing Tool</h1>
+
+<label>API Server:</label>
+<input type="text" id="apiServer" value="https://ftborgen.keypasco.com">
+<label>System Admin Username:</label>
+<input type="text" id="saUsername" value="sysadmins|admin">
+<label>System Admin Password:</label>
+<input type="text" id="saPassword" value="admin">
+
+<h2>==Create ICP==</h2>
+<label>ID(ICP):</label>
+<input type="text" id="icp" value="test3">
+<label>Full Name:</label>
+<input type="text" id="fullname" value="Full name">
+<button id="btnCreateICP">Create ICP</button>
+
+<h2>==Create new Borgen User==</h2>
+<label>Borgen Username:</label>
+<input type="text" id="brogenUser" value="icpadmin">
+<label>Borgen User Password:</label>
+<input type="text" id="borgenPassword" value="!Keypasco168">
+<div class="role-selection" style="margin-top: 20px;">
+    <label style="font-weight: bold; margin-bottom: 10px; display: block;">Select Roles:</label>
+    
+    <div style="
+        display: grid; 
+        /* 關鍵修改：將兩欄寬度設定為根據內容長度 (max-content)，並增加間距 (gap) */
+        grid-template-columns: max-content max-content; 
+        column-gap: 50px; /* 這裡可以調整第一欄與第二欄之間的距離 */
+        row-gap: 10px;
+        padding: 15px; 
+        border: 1px solid #ddd; 
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    ">
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_BILLING" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            BILLING
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_BORGEN_USER_EVENTS" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            BORGEN_USER_EVENTS
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_CLIENT_API" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            CLIENT_API
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_CUSTOMER_API" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            CUSTOMER_API
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_END_USER_EVENTS" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            END_USER_EVENTS
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_END_USER_SUPPORT" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            END_USER_SUPPORT
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_ICP_ADMIN" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            ICP_ADMIN
+        </label>
+
+        <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" name="roles" value="ROLE_ICP_STATISTICS" checked style="margin-right: 10px; width: 16px; height: 16px;">
+            ICP_STATISTICS
+        </label>
+    </div>
+</div>
+<button type="button" onclick="generatePassword()">Generate password</button>
+<button id="btnAddBorgenUser">Create Borgen User</button>
+
+<h2>==Download P12==</h2>
+<label>Certificate Name:</label>
+<input type="text" id="user" value="test3|icpadmin">
+<label>Borgen User Password:</label>
+<input type="text" id="password" value="!Keypasco168">
+<button id="btnDownloadP12">Generate P12</button>
+<button id="btnDownloadP12File">Download P12</button>
+<!-- <label>JSON Payload:</label>
+<textarea id="jsonInput">
+{
+  "id": "test3",
+  "fullname": "test3 name"
+}
+</textarea> -->
+
+<!-- <button onclick="createICP()">Create ICP</button>
+<button onclick="addBorgenUser()">Create Borgen User</button>
+<button onclick="downloadP12()">Generate P12</button>
+<button id="btnTest">Test</button> -->
+<br><br>
+<button id="btnRunPS">Run Script</button>
+<button id="btnDownloadInstaller">Download</button>
+
+<h3>Response:</h3>
+<pre id="result"></pre>
+
+<h3>Log:</h3>
+<div id="log"></div>
+
+<script src="/private/main.js"></script>
+
+<!-- <label for="folderSelect">Select folder:</label>
+<select id="folderSelect">
+    <option>Loading...</option>
+</select> -->
+
+<label for="folderSelect">Proxy Installer version:</label>
+<select id="folderSelect">
+    <option>Loading...</option>
+</select>
+
+<hr>
+
+<label for="fileSelect">Proxy version:</label>
+<select id="fileSelect">
+    <option>Loading...</option>
+</select>
+
+    <script>
+
+		function generatePassword(length = 12) {
+			// 定義密碼允許使用的字元池
+			const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			let password = "!";
+			
+			// 根據長度隨機選取字元
+			for (let i = 0; i < length - 1; i++) {
+				const randomIndex = Math.floor(Math.random() * charset.length);
+				password += charset[randomIndex];
+			}
+			
+			// 將產生的密碼寫入 input 欄位中
+			document.getElementById('borgenPassword').value = password;
+			document.getElementById('password').value = password;
+		}
+
+        // async function loadFolders(prefix = 'KeypascoProxyInstallerV') {
+        //     const selectMenu = document.getElementById('folderSelect');
+            
+        //     try {
+        //         // 呼叫後端 API
+        //         const response = await fetch(`/api/folders?prefix=${prefix}`);
+        //         const folders = await response.json();
+
+        //         // 清空選單
+        //         selectMenu.innerHTML = '';
+
+        //         if (folders.length === 0) {
+        //             selectMenu.innerHTML = '<option>Can not find match folder</option>';
+        //             return;
+        //         }
+
+        //         // 動態建立選項
+        //         folders.forEach(folder => {
+        //             const option = document.createElement('option');
+        //             option.value = folder;
+        //             option.textContent = folder;
+        //             selectMenu.appendChild(option);
+        //         });
+
+		// 		return true; // <--- 重要：成功時必須回傳 true
+        //     } catch (error) {
+        //         // console.error('Connect Error:', error);
+        //         selectMenu.innerHTML = '<option>Can not connect to server</option>';
+
+		// 		return false; // <--- 發生錯誤回傳 false
+        //     }
+        // }
+
+		// 通用函數：傳入「前綴」與「要填入的選單 ID」
+		// async function loadFoldersToSelect(prefix, selectId) {
+		// 	const selectMenu = document.getElementById(selectId);
+			
+		// 	try {
+		// 		// 使用相對路徑，自動適應 localhost 或 IP
+		// 		const response = await fetch(`/api/folders?prefix=${encodeURIComponent(prefix)}`);
+				
+		// 		// 處理 Session 過期重導向
+		// 		if (response.redirected) {
+		// 			window.location.href = response.url;
+		// 			return;
+		// 		}
+
+		// 		const folders = await response.json();
+		// 		selectMenu.innerHTML = '';
+
+		// 		if (!folders || folders.length === 0) {
+		// 			selectMenu.innerHTML = `<option>找不到 "${prefix}"</option>`;
+		// 			return;
+		// 		}
+
+		// 		folders.forEach(folder => {
+		// 			const option = document.createElement('option');
+		// 			option.value = folder;
+		// 			option.textContent = folder;
+		// 			selectMenu.appendChild(option);
+		// 		});
+
+		// 	} catch (error) {
+		// 		console.error(`載入 ${selectId} 失敗:`, error);
+		// 		selectMenu.innerHTML = '<option>連線失敗</option>';
+		// 	}
+		// }
+
+		async function loadList(prefix, type, selectId) {
+			const selectMenu = document.getElementById(selectId);
+			
+			try {
+				// 使用相對路徑避免 IP 登入 302 問題
+				// 傳入 type 參數告訴後端要找檔案還是資料夾
+				const response = await fetch(`/api/list?prefix=${encodeURIComponent(prefix)}&type=${type}`);
+				
+				if (response.redirected) {
+					window.location.href = response.url;
+					return;
+				}
+
+				const data = await response.json();
+				selectMenu.innerHTML = '';
+
+				if (data.length === 0) {
+					selectMenu.innerHTML = `<option>無相符項目</option>`;
+					return;
+				}
+
+				data.forEach(item => {
+					const option = document.createElement('option');
+					option.value = item;
+					option.textContent = item;
+					selectMenu.appendChild(option);
+				});
+			} catch (error) {
+				selectMenu.innerHTML = '<option>連線錯誤</option>';
+			}
+		}
+
+		window.onload = async () => {
+
+			// // 搜尋 A 並填入 installerSelect
+			// loadFoldersToSelect('KeypascoProxyInstallerV', 'installerSelect');
+			
+			// // 搜尋 B 並填入 backupSelect
+			// loadFoldersToSelect('ProxyV2/universal', 'proxySelect');
+
+			// 搜尋開頭為 "Keypasco" 的「資料夾」
+			loadList('KeypascoProxyInstallerV', 'dir', 'folderSelect');
+
+			// 搜尋開頭為 "config" 的「檔案」
+			loadList('Proxy', 'file', 'fileSelect');
+
+			// 等待資料夾加載完成
+			const success = await loadFolders(); 
+
+			const selectMenu = document.getElementById('folderSelect');
+
+			// --- A. 拿到第一個預設找到的值 ---
+			if (success && selectMenu.value) {
+				const firstValue = selectMenu.value;
+				// alert("初始預設值是：" + firstValue);
+				console.log("初始預設值:", firstValue);
+				// 如果想針對第一個值做後續動作，寫在這裡
+			}
+
+			// --- B. 拿到後來修改之後的值 ---
+			selectMenu.onchange = () => {
+				const choice = selectMenu.value;
+				if (choice) {
+					// alert("您修改後的選擇是：" + choice);
+					console.log("使用者修改了選擇:", choice);
+				}
+			};
+		};
+    </script>
+
+</body>
+</html>
