@@ -64,20 +64,22 @@ router.post('/create-borgen-user', async (req, res) => {
     const url = server + "/admin/api/sysadmin/icps/" + icp + "/borgenusers";
     const borgenUserName = req.body.borgenUser;
     const borgenPassword = req.body.borgenPassword;
+	const roles = req.body.roles;
     
     const payload = {
         username: borgenUserName,
         password: borgenPassword,
-        roles: [
-            "ROLE_BILLING",
-            "ROLE_BORGEN_USER_EVENTS",
-            "ROLE_CLIENT_API",
-            "ROLE_CUSTOMER_API",
-            "ROLE_END_USER_EVENTS",
-            "ROLE_END_USER_SUPPORT",
-            "ROLE_ICP_ADMIN",
-            "ROLE_ICP_STATISTICS"
-        ]
+		roles:roles || []
+        // roles: [
+        //     "ROLE_BILLING",
+        //     "ROLE_BORGEN_USER_EVENTS",
+        //     "ROLE_CLIENT_API",
+        //     "ROLE_CUSTOMER_API",
+        //     "ROLE_END_USER_EVENTS",
+        //     "ROLE_END_USER_SUPPORT",
+        //     "ROLE_ICP_ADMIN",
+        //     "ROLE_ICP_STATISTICS"
+        // ]
     };
 
     const username = saUsername;
@@ -102,6 +104,14 @@ router.post('/create-borgen-user', async (req, res) => {
         } catch {
             result = { message: text };
         }
+
+		const logContent = [``,
+			`Server: ${server}`,
+			`ICP: ${icp}`,
+			`Username: ${borgenUserName}`,
+			`P12 Password: ${borgenPassword}`
+		].join('\n'); // 使用 join('\n') 確保每一項都換行且沒有前方空格
+		recordCredential(icp, logContent);
 
         res.json(result);
 
@@ -148,6 +158,11 @@ router.post('/download-p12', async (req, res) => {
 
         
         if (!response.ok) {
+			// recordCredential(icp,`[Failed]Created Borgen User:
+            // Server: ${server}
+            // ICP: ${icp}
+            // Username: ${user}
+            // Password: ${p12Password}`);
             throw new Error(`API error: ${response.status}`);
         }
 
@@ -161,6 +176,12 @@ router.post('/download-p12', async (req, res) => {
 
         // 寫入檔案
         fs.writeFileSync(filePath, Buffer.from(buffer));
+
+		// recordCredential(icp, `[Success]Created Borgen User:
+        //     Server: ${server}
+        //     ICP: ${icp}
+        //     Username: ${user}
+        //     Password: ${p12Password}`);
 
         // 回傳下載連結
         res.json({ message: 'File downloaded', file: `/certs/${filename}.p12` });
@@ -211,6 +232,42 @@ router.get('/download', async (req, res) => {
     });
 });
 
+router.get('/downloadP12File', async (req, res) => {
+    const user = req.query.user;
+	const filename = user.replace("|","_");
+	const filePath = path.join(__dirname, "./certs/" + filename + ".p12"); // replace with your file
 
+	
+    if (!fs.existsSync(filePath)) {
+        console.error("File not found:", filePath);
+        return res.status(404).json({ error: "Installer not found for icp=" + icp });
+    }
+
+    res.download(filePath, filename + ".p12", (err) => {
+        if (err) {
+            console.error("Error downloading file:", err);
+            res.status(500).send("Error downloading file");
+        }
+    });
+});
+
+// 建立一個統一的紀錄函式
+const recordCredential = (subFolder, info) => {
+    const baseDir = path.join(__dirname, '../keypasco');
+	const targetDir = path.join(baseDir, subFolder);
+
+	// 2. 確保資料夾存在
+    if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+	const filePath = path.join(targetDir, 'credential.txt');
+	// const filePath = path.join(__dirname, 'credential.txt');
+    const timestamp = new Date().toLocaleString('en-US');
+    const content = `[${timestamp}] ${info}\n------------------------\n`;
+    
+    // 使用 appendFile 確保內容是累加的，不會覆蓋舊紀錄
+    fs.appendFileSync(filePath, content, 'utf8');
+};
 
 module.exports = router;
