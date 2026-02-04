@@ -194,7 +194,7 @@ router.post('/download-p12', async (req, res) => {
 
 router.post('/run-ps', async (req, res) => {
     // const scriptPath = path.join(process.cwd(), "keypasco", "myscript.ps1");; // Web 根目錄
-    const scriptPath = path.join(process.cwd(), "keypasco", "GenerateInstallV1.ps1"); // Web 根目錄
+    const scriptPath = path.join(process.cwd(), "keypasco", "GenerateInstallV2.ps1"); // Web 根目錄
     const command = `powershell.exe -ExecutionPolicy Bypass -File "${scriptPath}"  -CertName "test3_icpadmin" -CertPassword "Keypasco168"`;
 
     exec(command, (error, stdout, stderr) => {
