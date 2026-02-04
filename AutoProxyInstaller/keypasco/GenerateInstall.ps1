@@ -61,7 +61,7 @@ if (-not (Test-Path $icpFolder)) {
     New-Item -ItemType Directory -Path $icpFolder
 }
 
-$icpInstallerFilePath = $installFolder + "\files"
+$icpInstallerFilePath = $icpFolder + "\KeypascoProxyInstaller\files"
 $InstalliniDataPath = $icpInstallerFilePath + ".\iniData.json"
 
 Copy-Item -Path $installFolder -Destination $icpFolder\KeypascoProxyInstaller -Recurse -Force
