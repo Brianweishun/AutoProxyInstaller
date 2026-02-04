@@ -1,7 +1,7 @@
 {
 	"BorgenServer":"api2.mypasscode.com",
-	"P12Path":"C:\\Keypasco\\KeypascoProxyInstaller\\files\\bitsandbytes.net_customer.p12",
-	"P12Password":"yY8&K4%jCyKJ",
-	"ICP":"bitsandbytes.net",
+	"P12Path":"C:\\Keypasco\\KeypascoProxyInstaller\\files\\keypasco-demo_mfaproxy-new.p12",
+	"P12Password":"mfaproxy",
+	"ICP":"keypasco-demo",
 	"ClientApi":"api2.mypasscode.com"
 }
