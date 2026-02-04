@@ -21,6 +21,7 @@ $installFolder = $PSScriptRoot + "\KeypascoProxyInstallerV2"
 $installScript = $PSScriptRoot + "\ProxyInstaller.nsi"
 $scriptPath = "C:\MyProject\setup.nsi"
 $proxyName = $PSScriptRoot + "\ProxyV2\universal-1.019.08-1.43.4\universal-1.019.08-1.43.4.zip"
+$dbName = $PSScriptRoot + "\ProxyV2\universal-1.019.08-1.43.4\sqliteDB.sqlite"
 
 
 $parts = $CertName -split "_"
@@ -68,6 +69,7 @@ Copy-Item -Path $installFolder -Destination $icpFolder\KeypascoProxyInstaller -R
 Copy-Item -Path $proxyName -Destination $icpFolder\KeypascoProxyInstaller
 Copy-Item -Path $installScript -Destination $icpFolder
 Copy-Item -Path $p12Path$p12FileName -Destination $icpInstallerFilePath
+Copy-Item -Path $dbName -Destination $icpInstallerFilePath
 
 #replace p12 path&filename
 $pattern = "keypasco-demo_mfaproxy-new"
