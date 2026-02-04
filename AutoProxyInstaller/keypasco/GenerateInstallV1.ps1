@@ -7,7 +7,7 @@ param (
 )
 
 if (-not $CertName -or -not $CertPassword) {
-    Write-Host "Info: .\GenerateInstall.ps1 -CertName icp_name -CertPassword password"
+    Write-Host "Info: .\GenerateInstallV1.ps1 -CertName icp_name -CertPassword password"
     exit 1
 }
 
