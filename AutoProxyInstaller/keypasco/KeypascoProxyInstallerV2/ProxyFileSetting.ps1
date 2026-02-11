@@ -2,7 +2,9 @@
 param (
     [string]$lydmfaZIP
 )
-
+$vcInstallerPath = ".\files\VC_redist.x64.exe"
+$arguments = "/quiet /norestart"
+$icpUser = "mfaproxy"
 # Set the file paths
 #$webConfigPath = "$PSScriptRoot\files"		#for debug
 #$initConfigPath = "$PSScriptRoot\files"		#for debug
@@ -327,5 +329,73 @@ $streamWriter.Close()
 
 # $streamWriter.Close()
 
-Write-Host "Operation complete!"
+
 #Write-Host (Get-Date).ToString('MM-dd-yyyy.hhmmss')
+
+$exe   = "$PSScriptRoot\files\AESTool.exe"
+$args  = @("-e", $CertificatePasswordNewContent)
+
+# Check if the file exists
+if (-Not (Test-Path $vcInstallerPath)) {
+    Write-Error "Installer not found at $vcInstallerPath"
+    exit 1
+}
+
+# Start the installer process
+Start-Process -FilePath $vcInstallerPath -ArgumentList $arguments -Wait -NoNewWindow
+
+# 2>&1 會把 stderr 也導到 stdout，一起收回
+$output = & $exe @args 2>&1
+
+$EncPwd = $output.Split(':')[1].Trim()
+# Write-Host $EncPwd
+
+Unblock-File -Path $PSScriptRoot\files\System.Data.SQLite.dll
+Unblock-File -Path $PSScriptRoot\files\System.Data.SQLite.dll
+# 匯入 SQLite DLL
+Add-Type -Path "$PSScriptRoot\files\System.Data.SQLite.dll"
+
+# 建立 SQLite 連線
+$connectionString = "Data Source=C:\mfaproxy-setting\sqliteDB.sqlite;Version=3;"
+$connection = New-Object System.Data.SQLite.SQLiteConnection($connectionString)
+$connection.Open()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET MichCredentialID = '$CertificateNewContent';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET MichCredentialPwd = '$EncPwd';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET MichCustomerID = '$icpUser';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET CustomerApiUsername = '$CustomerIdNewContent|$icpUser';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET CustomerApiPassword = '$EncPwd';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET ClientApiUsername = '$CustomerIdNewContent|$icpUser';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET ClientApiPassword = '$EncPwd';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE ProxtConfig SET ClientApi = 'https//$endPointNewContent/api/clientapi/5';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+$command = $connection.CreateCommand()
+$command.CommandText = "UPDATE UserAccount SET MfaProxyAccPwd = '$EncPwd' WHERE MfaProxyAccount = 'kpadmin';"
+$rowsAffected = $command.ExecuteNonQuery()
+
+# 關閉連線
+$connection.Close()
+Write-Host "Operation complete!"

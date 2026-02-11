@@ -1,13 +1,15 @@
 
 param (
+	#[Parameter(Mandatory=$true)]
+    [string]$ApiServer,
     #[Parameter(Mandatory=$true)]
     [string]$CertName,
     #[Parameter(Mandatory=$true)]
     [string]$CertPassword
 )
 
-if (-not $CertName -or -not $CertPassword) {
-    Write-Host "Info: .\GenerateInstallV2.ps1 -CertName icp_name -CertPassword password"
+if (-not $CertName -or -not $CertPassword -or -not $ApiServer) {
+    Write-Host "Info: .\GenerateInstallV2.ps1 -ApiServer server_name -CertName icp_name -CertPassword password"
     exit 1
 }
 
@@ -84,6 +86,11 @@ $newString = $CertPassword
 #replace icp name
 $pattern = "keypasco-demo"
 $newString = $icp
+(Get-Content $InstalliniDataPath) -replace $pattern, $newString | Set-Content $InstalliniDataPath
+
+#replace server name
+$pattern = "api2tokyo.keypascoid.com"
+$newString = $ApiServer
 (Get-Content $InstalliniDataPath) -replace $pattern, $newString | Set-Content $InstalliniDataPath
 
 if (-not (Test-Path $nsisCompiler)) {
