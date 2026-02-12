@@ -160,11 +160,28 @@ async function downloadP12() {
 
 async function runPs1() {
     console.log("run ps1");
+	const server = document.getElementById("apiServer").value;
+    const icp = document.getElementById("icp").value;
+    const user = document.getElementById("user").value;
+    const password = document.getElementById("password").value;
+
+    if (!user.includes("|")) {
+        user = icp + "|" + user;
+    }
+
+    addLog("📤 [Client] Sending request…");
+
+    const payload = {
+        server,        // connect server
+        user,
+        password
+    };
 
     try {
         const response = await borgenFetch("/api/run-ps", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(payload)
         });
 
         const result = await response.json();

@@ -9,6 +9,13 @@
       "program": "${workspaceFolder}/server.js",
       "skipFiles": ["<node_internals>${/**"],
       "console": "integratedTerminal"
+    },
+	{
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Browser",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

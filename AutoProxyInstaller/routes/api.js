@@ -191,18 +191,27 @@ router.post('/download-p12', async (req, res) => {
     }
 });
 
-
 router.post('/run-ps', async (req, res) => {
-    // const scriptPath = path.join(process.cwd(), "keypasco", "myscript.ps1");; // Web 根目錄
+	const server = req.body.server;
+	const user = req.body.user;
+	const password = req.body.password;
+	const filename = user.replace("|","_");
+
+	// const scriptPath = path.join(process.cwd(), "keypasco", "myscript.ps1");; // Web 根目錄
     const scriptPath = path.join(process.cwd(), "keypasco", "GenerateInstallV2.ps1"); // Web 根目錄
-    const command = `powershell.exe -ExecutionPolicy Bypass -File "${scriptPath}"  -ApiServer "ftborgen.keypasco.com" -CertName "test3_icpadmin" -CertPassword "Keypasco168"`;
+    const command = `powershell.exe -ExecutionPolicy Bypass -File "${scriptPath}"  -ApiServer "${server}" -CertName "${filename}" -CertPassword "${password}"`;
 
     exec(command, (error, stdout, stderr) => {
-        return res.json({
+		// 1. Log to the VS Code terminal so you can see it while debugging
+    	// console.log("PS1 Output:", stdout);
+    	// if (stderr) console.error("PS1 Error Log:", stderr);
+
+		return res.json({
             success: !error,
             command: command,
-            // stdout: stdout,
-            // stderr: stderr,
+			// for ps1 log 
+            // stdout: stdout, // This is your 'Log'
+        	// stderr: stderr, // This contains PS1 warnings/errors
             error: error ? error.message : null
         });
         if (error) {

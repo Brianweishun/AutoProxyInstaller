@@ -13,7 +13,6 @@ if (-not $CertName -or -not $CertPassword -or -not $ApiServer) {
     exit 1
 }
 
-#Write-Host "file name $CertName."
 
 $nsisCompiler = "C:\Program Files (x86)\NSIS\makensis.exe"
 $icpFolder = $PSScriptRoot
@@ -33,6 +32,7 @@ $username = $parts[1]
 
 Write-Host $icp   # test
 Write-Host $username   # icpadmin
+Write-Host $CertName   # icpadmin
 
 $icpFolder = $icpFolder + "\" + $icp
 $p12FileName = $CertName + $p12FileName
@@ -74,17 +74,17 @@ Copy-Item -Path $p12Path$p12FileName -Destination $icpInstallerFilePath
 Copy-Item -Path $dbName -Destination $icpInstallerFilePath
 
 #replace p12 path&filename
-$pattern = "keypasco-demo_mfaproxy-new"
+$pattern = "default_p12"
 $newString = $CertName
 (Get-Content $InstalliniDataPath) -replace $pattern, $newString | Set-Content $InstalliniDataPath
 
 #replace p12 password
-$pattern = "mfaproxy"
+$pattern = "default_password"
 $newString = $CertPassword
 (Get-Content $InstalliniDataPath) -replace $pattern, $newString | Set-Content $InstalliniDataPath
 
 #replace icp name
-$pattern = "keypasco-demo"
+$pattern = "default_icp"
 $newString = $icp
 (Get-Content $InstalliniDataPath) -replace $pattern, $newString | Set-Content $InstalliniDataPath
 

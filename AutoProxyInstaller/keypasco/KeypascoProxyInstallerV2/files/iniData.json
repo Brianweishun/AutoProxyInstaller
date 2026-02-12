@@ -1,7 +1,7 @@
 {
 	"BorgenServer":"api2tokyo.keypascoid.com",
-	"P12Path":"C:\\Keypasco\\KeypascoProxyInstaller\\files\\keypasco-demo_mfaproxy-new.p12",
-	"P12Password":"mfaproxy",
-	"ICP":"keypasco-demo",
+	"P12Path":"C:\\Keypasco\\KeypascoProxyInstaller\\files\\default_p12.p12",
+	"P12Password":"default_password",
+	"ICP":"default_icp",
 	"ClientApi":"api2tokyo.keypascoid.com"
 }
