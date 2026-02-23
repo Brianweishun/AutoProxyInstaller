@@ -371,7 +371,7 @@ $command.CommandText = "UPDATE ProxtConfig SET MichCredentialPwd = '$EncPwd';"
 $rowsAffected = $command.ExecuteNonQuery()
 
 $command = $connection.CreateCommand()
-$command.CommandText = "UPDATE ProxtConfig SET MichCustomerID = '$icpUser';"
+$command.CommandText = "UPDATE ProxtConfig SET MichCustomerID = '$CustomerIdNewContent';"
 $rowsAffected = $command.ExecuteNonQuery()
 
 $command = $connection.CreateCommand()
