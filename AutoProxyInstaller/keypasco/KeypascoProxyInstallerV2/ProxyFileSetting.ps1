@@ -360,6 +360,8 @@ $connectionString = "Data Source=C:\mfaproxy-setting\sqliteDB.sqlite;Version=3;"
 $connection = New-Object System.Data.SQLite.SQLiteConnection($connectionString)
 $connection.Open()
 
+$CertificateNewContent = 'C:\mfaproxy-setting\' + (Get-Item $credentialIDNewContent).Name
+
 $command = $connection.CreateCommand()
 $command.CommandText = "UPDATE ProxtConfig SET MichCredentialID = '$CertificateNewContent';"
 $rowsAffected = $command.ExecuteNonQuery()
@@ -389,7 +391,7 @@ $command.CommandText = "UPDATE ProxtConfig SET ClientApiPassword = '$EncPwd';"
 $rowsAffected = $command.ExecuteNonQuery()
 
 $command = $connection.CreateCommand()
-$command.CommandText = "UPDATE ProxtConfig SET ClientApi = 'https//$endPointNewContent/api/clientapi/5';"
+$command.CommandText = "UPDATE ProxtConfig SET ClientApi = 'https://$endPointNewContent/api/clientapi/5';"
 $rowsAffected = $command.ExecuteNonQuery()
 
 $command = $connection.CreateCommand()
